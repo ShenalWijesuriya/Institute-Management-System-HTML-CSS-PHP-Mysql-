@@ -1,0 +1,569 @@
+<?php
+// Database connection
+$host = 'localhost'; 
+$db = 'institute'; 
+$user = 'root'; 
+$pass = ''; 
+
+try {
+    $pdo = new PDO("mysql:host=$host;dbname=$db", $user, $pass);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+} catch (PDOException $e) {
+    die("Connection failed: " . $e->getMessage());
+}
+
+// Add new online class
+if (isset($_POST['addClass'])) {
+    $title = $_POST['title'];
+    $date = $_POST['date'];
+    $link = $_POST['link'];
+    $teacher = $_POST['teacher'];
+    $price = $_POST['price'];
+
+    $stmt = $pdo->prepare("INSERT INTO online (title, date, link, teacher, price) VALUES (?, ?, ?, ?, ?)");
+    $stmt->execute([$title, $date, $link, $teacher, $price]);
+    header("Location: online.php");
+}
+
+// Update online class
+if (isset($_POST['updateClass'])) {
+    $id = $_POST['id'];
+    $title = $_POST['title'];
+    $date = $_POST['date'];
+    $link = $_POST['link'];
+    $teacher = $_POST['teacher'];
+    $price = $_POST['price'];
+
+    $stmt = $pdo->prepare("UPDATE online SET title = ?, date = ?, link = ?, teacher = ?, price = ? WHERE id = ?");
+    $stmt->execute([$title, $date, $link, $teacher, $price, $id]);
+    header("Location: online.php");
+}
+
+// Delete online class
+if (isset($_GET['delete_id'])) {
+    $id = $_GET['delete_id'];
+    $stmt = $pdo->prepare("DELETE FROM online WHERE id = ?");
+    $stmt->execute([$id]);
+    header("Location: online.php");
+}
+
+// Fetch all online classes
+$stmt = $pdo->query("SELECT * FROM online");
+$classes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Institute Admin Panel - Online Classes</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        /* General styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), 
+                        url('/images/img2.jpg') no-repeat center center fixed; 
+            background-size: cover;
+            color: white; /* Ensures text is readable */
+            display: flex;
+            min-height: 100vh;
+        }
+        .sidebar {
+            background-color: #343a40;
+            color: #ffffff;
+            width: 250px;
+            padding: 20px;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .sidebar h1 {
+            font-size: 22px;
+            margin-bottom: 30px;
+        }
+        .sidebar button {
+            background-color: #007bff;
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            padding: 15px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            text-align: left;
+            width: 100%;
+        }
+        .sidebar button:hover {
+            background-color: #0056b3;
+        }
+        .content {
+            flex: 1;
+            padding: 40px;
+        }
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .table th, .table td {
+            padding: 10px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+        .table th {
+            background-color: #343a40;
+            color: white;
+        }
+
+        /* Edit button */
+.table button {
+    padding: 8px 12px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.table button:hover {
+    background-color: #218838;
+}
+
+/* Delete button */
+.table a {
+    padding: 8px 12px;
+    background-color: #dc3545;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.table a:hover {
+    background-color: #c82333;
+}
+
+        .form-container {
+            margin-top: 20px;
+        }
+
+        .form-container {
+    margin-top: 50px;
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    max-width: 700px;
+    margin-left: ;
+    margin-right: auto;
+}
+
+ /* Modal styles */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6); /* Slightly darker background */
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* Ensure the modal is on top */
+    animation: fadeIn 0.3s ease; /* Added fade-in effect for modal */
+}
+
+.modal-content {
+    background-color: #fff;
+    padding: 30px;
+    width: 100%;
+    max-width: 500px; /* Responsive max-width */
+    border-radius: 12px;
+    box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.2);
+    transform: scale(0.9);
+    transition: transform 0.3s ease-in-out;
+    opacity: 0; /* Start with opacity 0 for fade-in effect */
+    animation: scaleUp 0.3s ease-out forwards; /* Animation for modal opening */
+}
+
+.modal-content.open {
+    transform: scale(1);
+    opacity: 1; /* Fade in */
+}
+
+.modal-header {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    color: #343a40;
+}
+
+/* Input fields */
+.modal input {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 16px;
+    transition: border-color 0.3s ease;
+}
+
+.modal input:focus {
+    border-color: #007bff;
+    box-shadow: 0px 0px 6px rgba(0, 123, 255, 0.3);
+}
+
+/* Buttons */
+.modal button {
+    padding: 12px 18px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+    width: 100%;
+    margin-top: 15px;
+}
+
+.modal button:hover {
+    background-color: #0056b3;
+}
+
+.modal button[type="button"] {
+    background-color: #f8f9fa;
+    color: #343a40;
+    border: 1px solid #ddd;
+    margin-top: 10px;
+}
+
+.modal button[type="button"]:hover {
+    background-color: #e2e6ea;
+    color: #007bff;
+}
+
+/* Close button (X) */
+.modal .close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 24px;
+    color: #343a40;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.modal .close:hover {
+    color: #dc3545;
+}
+
+/* Close modal animation */
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes scaleUp {
+    0% {
+        transform: scale(0.9);
+        opacity: 0;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@media (max-width: 600px) {
+    .modal-content {
+        width: 90%;
+        padding: 20px;
+    }
+}
+
+
+
+                    
+
+            .form-container h3 {
+                font-size: 24px;
+                font-weight: 600;
+                color: #343a40;
+                text-align: center;
+                margin-bottom: 20px;
+            }
+
+            .form-container form {
+                display: flex;
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .form-container input[type="text"],
+            .form-container input[type="email"],
+            .form-container input[type="password"] {
+                padding: 15px;
+                font-size: 16px;
+                border: 2px solid #ddd;
+                border-radius: 8px;
+                outline: none;
+                transition: border-color 0.3s ease;
+                width: 100%; 
+                box-sizing: border-box;  
+                height: 50px;  
+                align-items: center;
+            }
+
+            .form-container input[type="text"]:focus,
+            .form-container input[type="email"]:focus,
+            .form-container input[type="password"]:focus {
+                border-color: #007bff;
+                box-shadow: 0px 0px 4px rgba(0, 123, 255, 0.3);
+            }
+
+            .form-container button[type="submit"] {
+                padding: 14px 20px;
+                background-color: #007bff;
+                color: #ffffff;
+                font-size: 16px;
+                font-weight: 600;
+                border: none;
+                border-radius: 8px;
+                cursor: pointer;
+                transition: background-color 0.3s ease;
+            }
+
+            .form-container button[type="submit"]:hover {
+                background-color: #0056b3;
+            }
+
+            /* Add this to your existing styles */
+        .add-teacher-btn {
+            background-color: #28a745;
+            color: white;
+            padding: 30px 50px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 30px;
+            transition: background-color 0.3s ease;
+            font-size: 20px;
+        }
+
+        .add-teacher-btn:hover {
+            background-color: #218838;
+        }
+
+        #editImagePreview {
+    max-width: 100%; /* Ensure image is responsive */
+    max-height: 300px; /* Limit the height to 300px */
+    object-fit: contain; /* Ensures the image is contained without distorting its aspect ratio */
+    margin-top: 10px;
+}
+
+ /* Dropdown Container */
+ .dropdown {
+    position: relative;
+    width: 100%;
+    display: flex;
+    justify-content: flex-end; /* Align button to the right */
+}
+
+/* Arrow Icon */
+.dropbtn::after {
+    content: '▼';
+    font-size: 12px;
+    transition: transform 0.2s ease;
+}
+
+/* Dropdown Content (Hidden by Default) */
+.dropdown-content {
+    display: none;
+    position: absolute;
+    right: 0; /* Align content to the right */
+    top: 44px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    min-width: 180px;
+    z-index: 10;
+    border-radius: 6px;
+    overflow: hidden;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Dropdown Content Links */
+.dropdown-content a {
+    color: white;
+    padding: 12px;
+    display: block;
+    text-decoration: none;
+    font-size: 15px;
+    transition: background 0.3s ease-in-out, padding-left 0.2s ease;
+}
+
+/* Hover Effect for Links */
+.dropdown-content a:hover {
+    background: rgba(255, 255, 255, 0.2);
+    padding-left: 16px;
+}
+
+/* Show Dropdown on Hover */
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+/* Smooth Fade In Animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+    <h1>Institute Admin Panel</h1>
+        <button onclick="window.location.href='dashboard.php'">Dashboard</button>
+        <button onclick="window.location.href='teacher.php'">Teachers</button>
+        <button onclick="window.location.href='student.php'">Student</button>
+        <button onclick="window.location.href='student-login.php'">Student Web Login</button>
+        <button onclick="window.location.href='online_class.php'">Online Class</button> 
+        <button onclick="window.location.href='timetable.php'">Timetable</button>
+        <br>
+        <!-- Subjects Button with Popup -->
+    <div class="dropdown">
+        <button class="dropbtn">Subjects</button>
+        <div class="dropdown-content">
+            <a href="courses.php">WEB Cards Edit</a>
+        </div>
+    </div>
+
+    <div class="dropdown">
+        <button class="dropbtn">Online</button>
+        <div class="dropdown-content">
+            <a href="online.php">WEB Cards Edit</a>
+        </div>
+    </div>
+    </div>
+
+    <div class="content">
+        <h2>Online Classes</h2>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Title</th>
+                    <th>Teacher</th>
+                    <th>Date</th>
+                    <th>Price</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($classes as $class): ?>
+                    <tr>
+                        <td><?= $class['id'] ?></td>
+                        <td><?= $class['title'] ?></td>
+                        <td><?= $class['teacher'] ?></td>
+                        <td><?= $class['date'] ?></td>
+                        <td>$<?= number_format($class['price'], 2) ?></td>
+                        <td>
+                            <button onclick="openEditModal(<?= $class['id'] ?>, '<?= addslashes($class['title']) ?>', '<?= addslashes($class['teacher']) ?>', '<?= $class['date'] ?>', <?= $class['price'] ?>, '<?= addslashes($class['link']) ?>')">Edit</button>
+                            <a href="online.php?delete_id=<?= $class['id'] ?>" onclick="return confirm('Are you sure?')">Delete</a>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+        <button class="add-teacher-btn" onclick="openAddModal()">Add Online Class</button>
+
+        <!-- Add Class Modal -->
+        <div id="addModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeAddModal()">&times;</span>
+                <div class="modal-header">Add New Online Class</div>
+                <form action="online.php" method="POST">
+                    <input type="text" name="title" placeholder="Class Title" required>
+                    <input type="text" name="teacher" placeholder="Teacher Name" required>
+                    <input type="date" name="date" required>
+                    <input type="number" name="price" step="0.01" placeholder="Price" required>
+                    <input type="url" name="link" placeholder="Class Link" required>
+                    <button type="submit" name="addClass">Add Class</button>
+                    <button type="button" onclick="closeAddModal()">Cancel</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Edit Class Modal -->
+        <div id="editModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">Edit Online Class</div>
+                <form action="online.php" method="POST">
+                    <input type="hidden" name="id" id="editId">
+                    <input type="text" name="title" id="editTitle" required>
+                    <input type="text" name="teacher" id="editTeacher" required>
+                    <input type="date" name="date" id="editDate" required>
+                    <input type="number" name="price" id="editPrice" step="0.01" required>
+                    <input type="url" name="link" id="editLink" required>
+                    <button type="submit" name="updateClass">Update Class</button>
+                    <button type="button" onclick="closeEditModal()">Cancel</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openEditModal(id, title, teacher, date, price, link) {
+            document.getElementById('editId').value = id;
+            document.getElementById('editTitle').value = title;
+            document.getElementById('editTeacher').value = teacher;
+            document.getElementById('editDate').value = date;
+            document.getElementById('editPrice').value = price;
+            document.getElementById('editLink').value = link;
+            document.getElementById('editModal').style.display = 'flex';
+        }
+
+        function closeEditModal() {
+            document.getElementById('editModal').style.display = 'none';
+        }
+
+        function openAddModal() {
+            document.getElementById('addModal').style.display = 'flex';
+        }
+
+        function closeAddModal() {
+            document.getElementById('addModal').style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            if (event.target.className === 'modal') {
+                event.target.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>

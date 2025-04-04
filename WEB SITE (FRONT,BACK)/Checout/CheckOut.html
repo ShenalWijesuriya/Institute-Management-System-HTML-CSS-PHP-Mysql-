@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Registration</title>
+
+  <style>
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  body {
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(to bottom right, #000000, #333333);
+    color: #f8f8f8;
+    animation: fadeIn 1s ease-out;
+  }
+  
+  .container {
+    max-width: 900px;
+    margin: 50px auto;
+    padding: 20px 30px;
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+    animation: fadeIn 1.2s ease-out;
+    color: #333;
+  }
+  
+  h1 {
+    text-align: center;
+    color: #FFCC00;
+    font-size: 2.8rem;
+    margin-bottom: 20px;
+    font-weight: 700;
+  }
+  
+  h2 {
+    font-size: 1.8rem;
+    color: #333;
+    border-bottom: 2px solid #FFCC00;
+    padding-bottom: 8px;
+    margin-bottom: 20px;
+  }
+  
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    animation: fadeIn 1.5s ease-out;
+  }
+  
+  label {
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 5px;
+  }
+  
+  input[type="text"],
+  input[type="number"],
+  input[type="tel"],
+  input[type="email"],
+  input[type="password"],
+  select {
+    width: calc(100% - 20px);
+    max-width: 100%;
+    padding: 12px 10px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background: #f9f9f9;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+  }
+  
+  input:focus,
+  select:focus {
+    border-color: #FFCC00;
+    box-shadow: 0 0 10px rgba(255, 204, 0, 0.5);
+    outline: none;
+  }
+  
+  button {
+    padding: 14px 20px;
+    background: #FFCC00;
+    color: black;
+    font-weight: bold;
+    font-size: 1.1rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.3s ease;
+  }
+  
+  button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+  }
+  
+  button:active {
+    transform: scale(0.98);
+  }
+  
+  .section {
+    padding: 20px;
+    border-radius: 10px;
+    background: #f5f5f5;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .section:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  }
+  
+  .section h2 {
+    color: #333;
+  }
+  
+  .container {
+    transform: translateY(30px);
+    animation: fadeIn 1.5s ease forwards;
+  }
+  </style>
+  
+</head>
+<body>
+  <div class="container">
+    <h1>Student Registration</h1>
+    <form action="submit_registration.php" method="POST">
+      <!-- Student Details -->
+      <div class="section">
+        <h2>Student Details</h2>
+        <label for="studentName">Full Name</label>
+        <input type="text" id="studentName" name="studentName" required>
+        <div class="error" id="errorStudentName"></div>
+
+        <label for="studentAge">Age</label>
+        <input type="number" id="studentAge" name="studentAge" required>
+        <div class="error" id="errorStudentAge"></div>
+
+        <label for="studentGrade">Grade</label>
+        <select id="studentGrade" name="studentGrade" required>
+          <option value="">-- Select Grade --</option>
+          <option value="Grade 1">Grade 1</option>
+          <option value="Grade 2">Grade 2</option>
+          <option value="Grade 3">Grade 3</option>
+          <option value="Grade 4">Grade 4</option>
+          <option value="Grade 5">Grade 5</option>
+          <option value="Grade 6">Grade 6</option>
+          <option value="Grade 7">Grade 7</option>
+          <option value="Grade 8">Grade 8</option>
+          <option value="Grade 9">Grade 9</option>
+          <option value="Grade 10">Grade 10</option>
+        </select>
+        <div class="error" id="errorStudentGrade"></div>
+
+        <label for="studentSubjects">Subjects</label>
+        <select id="studentSubjects" name="studentSubjects" required>
+          <option value="">-- Select Subject --</option>
+          <option value="Sinhala">Sinhala</option>
+          <option value="English">English</option>
+          <option value="Mathematics">Mathematics</option>
+          <option value="Science">Science</option>
+          <option value="History">History</option>
+          <option value="Geography">Geography</option>
+          <option value="Information Technology">Information Technology</option>
+          <option value="Health Science">Health Science</option>
+          <option value="Religion">Religion</option>
+          <option value="Art">Art</option>
+          <option value="Music">Music</option>
+        </select>
+        <div class="error" id="errorStudentSubjects"></div>
+      </div>
+
+      <!-- Parent Details -->
+      <div class="section">
+        <h2>Parent Details</h2>
+        <label for="parentName">Parent Name</label>
+        <input type="text" id="parentName" name="parentName" required>
+        <div class="error" id="errorParentName"></div>
+
+        <label for="parentPhone">Phone Number</label>
+        <input type="tel" id="parentPhone" name="parentPhone" pattern="[0-9]{10}" required>
+        <div class="error" id="errorParentPhone"></div>
+      </div>
+
+      <!-- Payment Details -->
+      <div class="section">
+        <h2>Payment Details</h2>
+        <label for="cardName">Cardholder Name</label>
+        <input type="text" id="cardName" name="cardName" required>
+        <div class="error" id="errorCardName"></div>
+
+        <label for="cardNumber">Card Number</label>
+        <input type="text" id="cardNumber" name="cardNumber" pattern="[0-9]{16}" required>
+        <div class="error" id="errorCardNumber"></div>
+
+        <label for="expiryDate">Expiry Date (MM/YY)</label>
+        <input type="text" id="expiryDate" name="expiryDate" pattern="(0[1-9]|1[0-2])/([0-9]{2})" required>
+        <div class="error" id="errorExpiryDate"></div>
+
+        <label for="cvc">CVC</label>
+        <input type="text" id="cvc" name="cvc" pattern="[0-9]{3}" required>
+        <div class="error" id="errorCvc"></div>
+      </div>
+
+      <!-- Submit Button -->
+      <button type="submit">Submit Registration</button>
+    </form>
+  </div>
+
+  <script>
+    const form = document.getElementById('registrationForm');
+
+form.addEventListener('submit', function(event) {
+  event.preventDefault(); 
+
+  let isValid = true;
+
+ 
+  document.querySelectorAll('.error').forEach((error) => error.textContent = '');
+
+ 
+  const studentName = document.getElementById('studentName');
+  if (studentName.value.trim() === '') {
+    document.getElementById('errorStudentName').textContent = 'Full name is required.';
+    isValid = false;
+  }
+
+  const studentAge = document.getElementById('studentAge');
+  if (studentAge.value <= 0) {
+    document.getElementById('errorStudentAge').textContent = 'Age must be greater than 0.';
+    isValid = false;
+  }
+
+  const studentGrade = document.getElementById('studentGrade');
+  if (studentGrade.value === '') {
+    document.getElementById('errorStudentGrade').textContent = 'Please select a grade.';
+    isValid = false;
+  }
+
+  const studentSubjects = document.getElementById('studentSubjects');
+  if (studentSubjects.value === '') {
+    document.getElementById('errorStudentSubjects').textContent = 'Please select a subject.';
+    isValid = false;
+  }
+
+  const parentName = document.getElementById('parentName');
+  if (parentName.value.trim() === '') {
+    document.getElementById('errorParentName').textContent = 'Parent name is required.';
+    isValid = false;
+  }
+
+  const parentPhone = document.getElementById('parentPhone');
+  const phonePattern = /^[0-9]{10}$/;
+  if (!phonePattern.test(parentPhone.value)) {
+    document.getElementById('errorParentPhone').textContent = 'Phone number must be 10 digits.';
+    isValid = false;
+  }
+
+  const cardNumber = document.getElementById('cardNumber');
+  const cardPattern = /^[0-9]{16}$/;
+  if (!cardPattern.test(cardNumber.value)) {
+    document.getElementById('errorCardNumber').textContent = 'Card number must be 16 digits.';
+    isValid = false;
+  }
+
+  const expiryDate = document.getElementById('expiryDate');
+  const expiryPattern = /^(0[1-9]|1[0-2])\/([0-9]{2})$/;
+  if (!expiryPattern.test(expiryDate.value)) {
+    document.getElementById('errorExpiryDate').textContent = 'Expiry date must be in MM/YY format.';
+    isValid = false;
+  }
+
+  const cvc = document.getElementById('cvc');
+  const cvcPattern = /^[0-9]{3}$/;
+  if (!cvcPattern.test(cvc.value)) {
+    document.getElementById('errorCvc').textContent = 'CVC must be 3 digits.';
+    isValid = false;
+  }
+
+
+  if (isValid) {
+    const formData = new FormData(form);
+
+    fetch('submit_registration.php', {
+      method: 'POST',
+      body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        // Show success message
+        alert("Registration successful!");
+        form.reset(); 
+      } else {
+        // Handle error (if any)
+        alert("Error: " + data.error);
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      alert("An error occurred. Please try again.");
+    });
+  }
+});
+
+  </script>
+</body>
+</html>

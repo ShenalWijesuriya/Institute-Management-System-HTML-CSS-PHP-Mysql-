@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online Session Registration</title>
+    <style>
+       body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #000;
+            color: #fff;
+        }
+        .container {
+            width: 80%;
+            max-width: 600px;
+            background: #fff;
+            color: #000;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        table {
+            width: 100%;
+            margin-bottom: 20px;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid #000;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f9dc00;
+            color: #000;
+        }
+        .form-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #f9dc00;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #f9dc00;
+            border-radius: 4px;
+            background-color: #000;
+            color: #fff;
+        }
+        .button-group {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #f9dc00;
+            color: #000;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #cac44b;
+        }
+        #backButton {
+            background-color: #f9dc00;
+        }
+        #backButton:hover {
+            background-color: #cac44b;
+        }
+        .notification {
+            display: none;
+            margin-top: 20px;
+            color: #f9dc00;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Online Session</h1>
+        <table>
+            <tr>
+                <th>Subject</th>
+                <td>Science</td>
+            </tr>
+            <tr>
+                <th>Date</th>
+                <td>Monday</td>
+            </tr>
+            <tr>
+                <th>Time</th>
+                <td>7:00 PM - 10:30 PM</td>
+            </tr>
+            <tr>
+                <th>Type</th>
+                <td>Online</td>
+            </tr>
+        </table>
+        <h2>Register For Online Session</h2>
+        <form id="registrationForm" method="POST" action="register.php">
+            <div class="form-group">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="subject">Select Subject:</label>
+                <select id="subject" name="subject" required>
+                    <option value="Science">Science</option>
+                </select>
+            </div>
+            <div class="button-group">
+                <button type="submit">Submit</button>
+                <button type="button" id="backButton">Back</button>
+            </div>
+        </form>
+        <p class="notification" id="notification">Registration successful!</p>
+    </div>
+    <script>
+        const backButton = document.getElementById('backButton');
+        backButton.addEventListener('click', function() {
+            window.location.href = '/Home.html';
+        });
+    </script>
+</body>
+</html>
+
+
